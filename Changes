@@ -1,5 +1,10 @@
 Revision history for URL::List
 
+0.12    2016-10-07
+        - Now using Moose instead of Mouse.
+        - Minor changes to inner workings.
+        - Upped requirements' version numbers.
+
 0.11    2013-08-11
         - Fixed a bug that kicked in for older Perl versions.
 

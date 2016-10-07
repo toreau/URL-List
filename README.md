@@ -4,15 +4,22 @@ URL::List - Object-oriented methods of handling list of URLs.
 
 # VERSION
 
-Version 0.11
+Version 0.12
 
 # SYNOPSIS
 
     use URL::List;
 
-    my $list = URL::List->new; # or URL::List->new;
+    my $list = URL::List->new;
     $list->add( 'http://www.google.com/' );
     $list->add( 'http://www.bbc.co.uk/' );
+
+    # or
+
+    my $list = URL::List->new(
+        allow_duplicates => 1,       # default false
+        urls             => [ ... ], # arrayref of URLs
+    );
 
     my $distributed_by_hosts = $list->distributed_by_host;
 
@@ -69,12 +76,11 @@ it to true (1), URL::List will not filter out duplicate articles.
 
 ## add( $url )
 
-Add a URL to the list.
+Add a URL to the list. `$url` can be an array reference of URLs.
 
 ## all
 
-Returns an array reference of all the URLs in the list. This list can include
-duplicates.
+Returns an array reference of all the URLs in the list.
 
 ## count
 
@@ -113,13 +119,13 @@ and the value is an array reference to the top-level domain name's URLs.
 
 # LICENSE AND COPYRIGHT
 
-Copyright 2012-2013 Tore Aursand.
+Copyright 2012-2016 Tore Aursand.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the the Artistic License (2.0). You may obtain a
 copy of the full license at:
 
-[http://www.perlfoundation.org/artistic\_license\_2\_0](http://www.perlfoundation.org/artistic\_license\_2\_0)
+[http://www.perlfoundation.org/artistic\_license\_2\_0](http://www.perlfoundation.org/artistic_license_2_0)
 
 Any use, modification, and distribution of the Standard or Modified
 Versions is governed by this Artistic License. By using, modifying or

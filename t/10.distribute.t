@@ -61,4 +61,14 @@ is_deeply( $list->distributed_by_host,   { 'www.vg.no' => [ 'http://www.vg.no', 
 is_deeply( $list->distributed_by_domain, { 'vg.no'     => [ 'http://www.vg.no', 'http://www.vg.no:80', 'http://www.vg.no/', 'http://www.vg.no:80/', 'http://www.vg.no/index.html', 'http://www.vg.no', 'http://www.vg.no:80', 'http://www.vg.no/', 'http://www.vg.no:80/', 'http://www.vg.no/index.html' ] } );
 is_deeply( $list->distributed_by_tld,    { 'no'        => [ 'http://www.vg.no', 'http://www.vg.no:80', 'http://www.vg.no/', 'http://www.vg.no:80/', 'http://www.vg.no/index.html', 'http://www.vg.no', 'http://www.vg.no:80', 'http://www.vg.no/', 'http://www.vg.no:80/', 'http://www.vg.no/index.html' ] } );
 
+$list = URL::List->new(
+    urls => \@urls,
+);
+
+is( $list->count, 5, 'URL count is OK' );
+
+is_deeply( $list->distributed_by_host,   { 'www.vg.no' => [ 'http://www.vg.no', 'http://www.vg.no:80', 'http://www.vg.no/', 'http://www.vg.no:80/', 'http://www.vg.no/index.html' ] } );
+is_deeply( $list->distributed_by_domain, { 'vg.no'     => [ 'http://www.vg.no', 'http://www.vg.no:80', 'http://www.vg.no/', 'http://www.vg.no:80/', 'http://www.vg.no/index.html' ] } );
+is_deeply( $list->distributed_by_tld,    { 'no'        => [ 'http://www.vg.no', 'http://www.vg.no:80', 'http://www.vg.no/', 'http://www.vg.no:80/', 'http://www.vg.no/index.html' ] } );
+
 done_testing;

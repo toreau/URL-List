@@ -1,5 +1,5 @@
 package URL::List;
-use Mouse;
+use Moose;
 use namespace::autoclean;
 
 =head1 NAME
@@ -8,11 +8,11 @@ URL::List - Object-oriented methods of handling list of URLs.
 
 =head1 VERSION
 
-Version 0.11
+Version 0.12
 
 =cut
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 use Carp;
 use Domain::PublicSuffix;
@@ -23,9 +23,16 @@ use URI;
 
     use URL::List;
 
-    my $list = URL::List->new; # or URL::List->new;
+    my $list = URL::List->new;
     $list->add( 'http://www.google.com/' );
     $list->add( 'http://www.bbc.co.uk/' );
+
+    # or
+
+    my $list = URL::List->new(
+        allow_duplicates => 1,       # default false
+        urls             => [ ... ], # arrayref of URLs
+    );
 
     my $distributed_by_hosts = $list->distributed_by_host;
 
@@ -85,9 +92,26 @@ it to true (1), URL::List will not filter out duplicate articles.
 has 'allow_duplicates' => ( isa => 'Bool',          is => 'rw', default => 0          );
 has 'urls'             => ( isa => 'ArrayRef[Str]', is => 'rw', default => sub { [] } );
 
+sub _add {
+    my $self = shift;
+    my $url  = shift // '';
+
+    if ( length $url ) {
+        if ( my $uri = URI->new($url) ) {
+            push( @{$self->urls}, $uri );
+        }
+        else {
+            carp "Can't add '" . $url . "' to the list of URLs; seems to be an invalid URL!";
+        }
+    }
+    else {
+        carp "Can't add an empty string as a URL!";
+    }
+}
+
 =head2 add( $url )
 
-Add a URL to the list.
+Add a URL to the list. C<$url> can be an array reference of URLs.
 
 =cut
 
@@ -95,15 +119,18 @@ sub add {
     my $self = shift;
     my $url  = shift;
 
-    if ( defined $url && length $url ) {
-        push( @{$self->urls}, $url );
+    if ( defined $url ) {
+        my $urls = ( ref $url eq 'ARRAYREF' ) ? $url : [ $url ];
+
+        foreach ( @{$urls} ) {
+            $self->_add( $_ );
+        }
     }
 }
 
 =head2 all
 
-Returns an array reference of all the URLs in the list. This list can include
-duplicates.
+Returns an array reference of all the URLs in the list.
 
 =cut
 
@@ -177,12 +204,7 @@ sub _build_distributions {
     my @urls = ();
 
     foreach my $url ( @{$self->all} ) {
-        if ( my $uri = URI->new($url) ) {
-            push( @urls, $url );
-        }
-        else {
-            carp "Couldn't create a URI object from '" . $url . "'. Skipping it!";
-        }
+        push( @urls, $url );
     }
 
     #
@@ -192,10 +214,10 @@ sub _build_distributions {
     my $suffix        = Domain::PublicSuffix->new;
 
     foreach my $url ( @urls ) {
-        my $host = undef;
+        # my $host = undef;
 
-        eval {
-            $host = URI->new( $url )->host;
+        my $host = eval {
+            URI->new( $url )->host;
         };
 
         if ( $@ ) {
@@ -284,7 +306,7 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2012-2013 Tore Aursand.
+Copyright 2012-2016 Tore Aursand.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the the Artistic License (2.0). You may obtain a
