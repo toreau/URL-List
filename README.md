@@ -1,10 +1,10 @@
 # NAME
 
-URL::List - Object-oriented methods of handling list of URLs.
+URL::List - Helper class for creating distributed lists of URLs based on their host name, domain name or TLDs.
 
 # VERSION
 
-Version 0.12
+Version 0.13
 
 # SYNOPSIS
 
@@ -116,6 +116,80 @@ and the value is an array reference to the domain name's URLs.
 
 Returns a hash reference where the key is the top-level domain name, like "com",
 and the value is an array reference to the top-level domain name's URLs.
+
+## blocks\_by\_host, blocks\_by\_domain, blocks\_by\_tld
+
+Returns "blocks" of URLs distributed by their host/domain/TLD, i.e. an array
+reference of array references containing URLs distributed as evenly as possible;
+
+    my $list = URL::List->new(
+        urls => [qw(
+            http://www.businessinsider.com/1.html
+            http://www.businessinsider.com/2.html
+            http://www.businessinsider.com/3.html
+            http://www.engadget.com/1.html
+            http://www.engadget.com/2.html
+            http://www.engadget.com/3.html
+            http://www.engadget.com/4.html
+            http://www.independent.co.uk/1.html
+            http://www.independent.co.uk/2.html
+            http://www.pcmag.com/1.html
+            http://www.pcmag.com/2.html
+            http://www.pcmag.com/3.html
+            http://www.technologyreview.com/1.html
+            http://www.technologyreview.com/2.html
+            http://www.technologyreview.com/3.html
+            http://www.technologyreview.com/4.html
+            http://www.zdnet.com/1.html
+            http://www.zdnet.com/2.html
+            http://www.zdnet.com/3.html
+        )],
+    );
+
+    # $list->blocks_by_host = [
+    #     [qw(
+    #         http://www.businessinsider.com/1.html
+    #         http://www.engadget.com/1.html
+    #         http://www.independent.co.uk/1.html
+    #         http://www.pcmag.com/1.html
+    #         http://www.technologyreview.com/1.html
+    #         http://www.zdnet.com/1.html
+    #     )],
+    #
+    #     [qw(
+    #         http://www.businessinsider.com/2.html
+    #         http://www.engadget.com/2.html
+    #         http://www.independent.co.uk/2.html
+    #         http://www.pcmag.com/2.html
+    #         http://www.technologyreview.com/2.html
+    #         http://www.zdnet.com/2.html
+    #     )],
+    #
+    #     [qw(
+    #         http://www.businessinsider.com/3.html
+    #         http://www.engadget.com/3.html
+    #         http://www.pcmag.com/3.html
+    #         http://www.technologyreview.com/3.html
+    #         http://www.zdnet.com/3.html
+    #     )],
+    #
+    #     [qw(
+    #         http://www.engadget.com/4.html
+    #         http://www.technologyreview.com/4.html
+    #     )],
+    # ],
+
+This is useful if you want to crawl many URLs, but also want to pause between
+each visit to host/domain/TLD;
+
+    my $list = URL::List->new( urls => [...] );
+
+    foreach my $urls ( @{$list->blocks_by_domain} ) {
+        # get $urls in parallel, you will only visit each domain once, or you
+        # can delegate $urls to other workers (crawlers) to spread load etc.
+
+        sleep( 5 ); # let's be nice and pause
+    }
 
 # LICENSE AND COPYRIGHT
 

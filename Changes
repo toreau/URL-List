@@ -1,5 +1,8 @@
 Revision history for URL::List
 
+0.13    2016-10-10
+        - Added blocks_by_host, blocks_by_domain and blocks_by_tld.
+
 0.12    2016-10-07
         - Now using Moose instead of Mouse.
         - Minor changes to inner workings.
