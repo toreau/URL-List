@@ -193,7 +193,7 @@ each visit to host/domain/TLD;
 
 # LICENSE AND COPYRIGHT
 
-Copyright 2012-2016 Tore Aursand.
+Copyright 2012-2017 Tore Aursand.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the the Artistic License (2.0). You may obtain a
